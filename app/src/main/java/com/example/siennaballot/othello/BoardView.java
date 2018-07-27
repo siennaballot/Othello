@@ -35,6 +35,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
     ArrayList<Piece> black;
     ArrayList<Piece> white;
 
+    AI ai;
+
     Bitmap board_pic;
     Bitmap background;
 
@@ -66,8 +68,11 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
         turn = 1;     //black gets first turn
 
         start = true;
-        p1_move = true;  //player 1 gets first move
-        p2_move = false;
+        //p1_move = true;  //player 1 gets first move
+        //p2_move = false;
+        avp = true;
+
+        ai = new AI();
 
         board_pic = BitmapFactory.decodeResource(getResources(), R.drawable.board);
     }
@@ -158,6 +163,10 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                 int black_y = ((black.get(i).getY()+1) * square) + (square/2);
                 c.drawCircle(black_x, black_y, radius, black_paint);
             }
+
+        if (turn == 2 && avp) {
+                ai.search();
+        }
 
         invalidate();
     }
