@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 
-    int[][] board = new int[9][9];
+    int[][] board = new int[8][8];
     boolean start;
     boolean pvp, avp, ava;
     boolean p1_move;
@@ -165,24 +165,29 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }
 
         if (turn == 2 && avp) {
-            ai.decision(board, turn);
-            int x = ai.bestX;
-            int y = ai.bestY;
-            legal(x, y, turn, true);
-            board[y][x] = turn;
-            turn = 1;
-            white.clear();
-            black.clear();
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if (board[i][j] == 1) {
-                        black.add(new Piece(i, j, 1));
-                    } else if (board[i][j] == 2) {
-                        white.add(new Piece(i, j, 2));
+            ai.best_move(board, turn);
+            if (ai.num_moves[0] == 0) {
+                turn = 1;
+            }
+            else {
+                int x = ai.bestX;
+                int y = ai.bestY;
+                legal(x, y, turn, true);
+                board[y][x] = turn;
+                turn = 1;
+                white.clear();
+                black.clear();
+                for (int i = 0; i < 8; i++) {
+                    for (int j = 0; j < 8; j++) {
+                        if (board[i][j] == 1) {
+                            black.add(new Piece(i, j, 1));
+                        } else if (board[i][j] == 2) {
+                            white.add(new Piece(i, j, 2));
+                        }
                     }
                 }
+                invalidate();
             }
-            invalidate();
         }
         invalidate();
     }
@@ -278,7 +283,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                 for (int j = -1; j <= 1; j++) {
                     posX = x + i;
                     posY = y + j;
-                    if (posX < 0  || posY < 0 || posX > 8 || posY > 8) {
+                    if (posX < 0  || posY < 0 || posX > 7 || posY > 7) {
                         continue;
                     }
 
@@ -292,7 +297,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                     while(!valid) {
                         posX += i;
                         posY += j;
-                        if (posX < 0  || posY < 0 || posX > 8 || posY > 8) {
+                        if (posX < 0  || posY < 0 || posX > 7 || posY > 7) {
                             continue;
                         }
                         curr = board[posY][posX];
@@ -304,7 +309,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                             if (move) {
                                 posX -= i;
                                 posY -= j;
-                                if (posX < 0  || posY < 0 || posX > 8 || posY > 8) {
+                                if (posX < 0  || posY < 0 || posX > 7 || posY > 7) {
                                     continue;
                                 }
                                 curr = board[posY][posX];
@@ -313,7 +318,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                                     board[posY][posX] = c;
                                     posX -= i;
                                     posY -= j;
-                                    if (posX < 0  || posY < 0 || posX > 8 || posY > 8) {
+                                    if (posX < 0  || posY < 0 || posX > 7 || posY > 7) {
                                         continue;
                                     }
                                     curr = board[posY][posX];
