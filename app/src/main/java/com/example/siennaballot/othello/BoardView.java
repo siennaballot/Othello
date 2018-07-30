@@ -165,9 +165,25 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }
 
         if (turn == 2 && avp) {
-                ai.search();
+            ai.decision(board, turn);
+            int x = ai.bestX;
+            int y = ai.bestY;
+            legal(x, y, turn, true);
+            board[y][x] = turn;
+            turn = 1;
+            white.clear();
+            black.clear();
+            for (int i = 0; i < 8; i++) {
+                for (int j = 0; j < 8; j++) {
+                    if (board[i][j] == 1) {
+                        black.add(new Piece(i, j, 1));
+                    } else if (board[i][j] == 2) {
+                        white.add(new Piece(i, j, 2));
+                    }
+                }
+            }
+            invalidate();
         }
-
         invalidate();
     }
 
@@ -211,16 +227,20 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 
             }
             else {*/
+            if (avp && turn == 1) {
                 row1 = (int) (y / square) - 1;
                 col1 = (int) x / square;
-                System.out.println(row1+", "+col1);
+                System.out.println(row1 + ", " + col1);
                 boolean move = true;
                 //check legality of move
                 if (legal(col1, row1, turn, move)) {
                     System.out.println("legal move");
                     board[row1][col1] = turn;
-                    if (turn == 1) { turn = 2; }
-                    else if (turn == 2) { turn = 1; }
+                    if (turn == 1) {
+                        turn = 2;
+                    } else if (turn == 2) {
+                        turn = 1;
+                    }
                     //switch pieces
                     //redraw board if move is legal
                     white.clear();
@@ -228,20 +248,19 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                     for (int i = 0; i < 8; i++) {
                         for (int j = 0; j < 8; j++) {
                             if (board[i][j] == 1) {
-                                black.add(new Piece(i,j,1));
-                            }
-                            else if (board[i][j] == 2) {
-                                white.add(new Piece(i,j,2));
+                                black.add(new Piece(i, j, 1));
+                            } else if (board[i][j] == 2) {
+                                white.add(new Piece(i, j, 2));
                             }
                         }
                     }
 
                     invalidate();
-                }
-                else {
+                } else {
                     System.out.println("illegal move");
                 }
                 return true;
+            }
         }
         return false;
     }
@@ -310,198 +329,5 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
         return legal;
-        //out of bounds = not legal
-        /*if (x > 7 || x < 0 || y > 7 || y < 0) {
-            return false;
-        }
-        //not empty square = not legal
-        if (board[y][x] != 0) {
-            return false;
-        }
-        //if player 1 move, check if other white pieces are in same row or column
-        //check if black pieces exist between white
-        if (p2_move) {
-            if (board[y+1][x] != 2 && board[y-1][x] != 2 && board[y][x+1] != 2 && board[y][x-1] != 2 &&
-                board[y+1][x+1] != 2 && board[y-1][x+1] != 2 && board[y+1][x-1] != 2 && board[y-1][x-1] != 2) {
-                return false;
-            }
-            else if (board[y+1][x] == 2) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y+i][x] == 0 || y+i > 7) {
-                        return false;
-                    }
-                    else if (board[y+i][x] == 1) {
-                        row2 = y+i;
-                        col2 = x;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y-1][x] == 2) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y-i][x] == 0 || y-i < 0) {
-                        return false;
-                    }
-                    else if (board[y-i][x] == 1) {
-                        row2 = y-i;
-                        col2 = x;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y][x+1] == 2) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y][x+i] == 0 || x+i > 7) {
-                        return false;
-                    }
-                    else if (board[y][x+i] == 1) {
-                        row2 = y;
-                        col2 = x+i;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y][x-1] == 2) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y][x-i] == 0 || x-i < 0) {
-                        return false;
-                    }
-                    else if (board[y][x-i] == 1) {
-                        row2 = y;
-                        col2 = x-i;
-                        move();
-                        return true;
-                    }
-                }
-            }
-        }
-        else if (p1_move) {
-            if (board[y+1][x] != 1 && board[y-1][x] != 1 && board[y][x+1] != 1 && board[y][x-1] != 1) {
-                return false;
-            }
-            else if (board[y+1][x] == 1) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y+i][x] == 0 || y+i > 7) {
-                        return false;
-                    }
-                    else if (board[y+i][x] == 2) {
-                        row2 = y+i;
-                        col2 = x;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y-1][x] == 1) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y-i][x] == 0 || y-i < 0) {
-                        return false;
-                    }
-                    else if (board[y-i][x] == 2) {
-                        row2 = y-i;
-                        col2 = x;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y][x+1] == 1) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y][x+i] == 0 || x+i > 7) {
-                        return false;
-                    }
-                    else if (board[y][x+i] == 2) {
-                        row2 = y;
-                        col2 = x+i;
-                        move();
-                        return true;
-                    }
-                }
-            }
-            else if (board[y][x-1] == 1) {
-                for (int i = 2; i < 8; i++) {
-                    if (board[y][x-i] == 0 || x-i < 0) {
-                        return false;
-                    }
-                    else if (board[y][x-i] == 2) {
-                        row2 = y;
-                        col2 = x-i;
-                        move();
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    public void move() {
-        if (p1_move) {
-            if (row1 == row2) {
-                if (col1 > col2) {
-                    for (int i = 1; col2 + i <= col1; i++) {
-                        board[col2+i][row1] = 1;
-                    }
-                }
-                else if (col2 > col1) {
-                    for (int i = 1; col1 + i <= col2; i++) {
-                        board[col1+i][row1] = 1;
-                    }
-                }
-            }
-            else if (col1 == col2) {
-                if (row1 > row2) {
-                    for (int i = 1; row2 + i <= row1; i++) {
-                        board[col2][row2 + i] = 1;
-                    }
-                }
-                else if (row2 > row1) {
-                    for (int i = 1; row1 + i <= row2; i++) {
-                        board[col2][row1 + i] = 1;
-                    }
-                }
-            }
-        }
-        else if (p2_move) {
-            if (row1 == row2) {
-                if (col1 > col2) {
-                    for (int i = 1; col2 + i <= col1; i++) {
-                        board[col2+i][row1] = 2;
-                    }
-                }
-                else if (col2 > col1) {
-                    for (int i = 1; col1 + i <= col2; i++) {
-                        board[col1+i][row1] = 2;
-                    }
-                }
-            }
-            else if (col1 == col2) {
-                if (row1 > row2) {
-                    for (int i = 1; row2 + i <= row1; i++) {
-                        board[col2][row2 + i] = 2;
-                    }
-                }
-                else if (row2 > row1) {
-                    for (int i = 1; row1 + i <= row2; i++) {
-                        board[col2][row1 + i] = 2;
-                    }
-                }
-            }
-        }
-        white.clear();
-        black.clear();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                if (board[i][j] == 1) {
-                    white.add(new Piece(i,j,1));
-                }
-                else if (board[j][i] == 2) {
-                    black.add(new Piece(i,j,1));
-                }
-            }
-        }*/
     }
 }
