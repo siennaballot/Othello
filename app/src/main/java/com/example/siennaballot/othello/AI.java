@@ -10,10 +10,10 @@ public class AI {
     int maxDepth;
 
     public AI(){
-        num_moves = new int[5];
-        Xmove = new int[5][64];
-        Ymove = new int[5][64];
-        maxDepth = 5;
+        maxDepth = 3;
+        num_moves = new int[maxDepth];
+        Xmove = new int[maxDepth][64];
+        Ymove = new int[maxDepth][64];
     }
 
     public void possible_moves(int board[][], int turn, int depth) {
@@ -51,7 +51,7 @@ public class AI {
     }
 
     public void best_move(int board[][], int turn) {
-        for (int i = 0; i < 5; i++) { num_moves[i] = 0; }
+        for (int i = 0; i < maxDepth; i++) { num_moves[i] = 0; }
         int opponent = 1;
         if (turn == 1) { opponent = 2; }
         //get all possible moves
@@ -74,6 +74,7 @@ public class AI {
                 }
                 legal(temp, Xmove[0][i], Ymove[0][i], turn, true);
                 int val = search(temp, opponent, turn, 1);
+                temp = null;
                 if ((Xmove[0][i] == 0 && Ymove[0][i] == 0) || (Xmove[0][i] == 0 && Ymove[0][i] == 7) || (Xmove[0][i] == 7 && Ymove[0][i] == 0) || (Xmove[0][i] == 7 && Ymove[0][i] == 7)) {
                     val += 1000;
                 }
@@ -90,10 +91,10 @@ public class AI {
                     val -= 100;
                 }
                 else if (Xmove[0][i] == 0 || Xmove[0][i] == 7 || Ymove[0][i] == 0 || Ymove[0][i] == 7) {
-                    val += 100;
-                }
-                else if (Xmove[0][i] == Ymove[0][i]) {
                     val += 10;
+                }
+                else if (Xmove[0][i] == Ymove[0][i] || Xmove[0][i] + Ymove[0][i] == 7) {
+                    val += 5;
                 }
                 if (val > bestVal) {
                     bestVal = val;
@@ -124,6 +125,7 @@ public class AI {
                 }
                 legal(temp, Xmove[depth][i], Ymove[depth][i], turn, true);
                 int val = search(temp, opponent, originalTurn, depth+1);
+                temp = null;
                 if (turn == originalTurn) {
                     if (val > bestcurrVal) { bestcurrVal = val; }
                 }
@@ -197,7 +199,6 @@ public class AI {
                 if (board[i][j] == 0) {
                     return false;
                 }
-                else { continue; }
             }
         }
         return true;
