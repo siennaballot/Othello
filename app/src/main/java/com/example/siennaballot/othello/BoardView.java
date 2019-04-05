@@ -156,59 +156,23 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
         blackpieces.setTextAlign(Paint.Align.RIGHT);
         c.drawText("BLACK: "+blackstring, width*8/10, square-20, blackpieces);
 
-            //display game board
-            //c.drawCircle();
-            /*for  (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if (board[i][j] == 0) {
-
-                    }
-                }
-            }*/
-
-            /*
-            //draw white pieces on board from arraylist
-            for (int i = 0; i < white.size(); i++) {
-                int white_x = ((white.get(i).getX()) * square) + (square/2);
-                int white_y = ((white.get(i).getY()+1) * square) + (square/2);
-                c.drawCircle(white_x, white_y, radius, white_paint);
-            }
-
-            //draw black pieces on board from arraylist
-            for (int i = 0; i < black.size(); i++) {
-                int black_x = ((black.get(i).getX()) * square) + (square/2);
-                int black_y = ((black.get(i).getY()+1) * square) + (square/2);
-                c.drawCircle(black_x, black_y, radius, black_paint);
-            }*/
-
-        if (turn == 2 && avp) {
-            //Thread t = new AI(board, turn);
-            //t.start();
-            ai.best_move(board, turn);
-            if (ai.num_moves[0] == 0) { turn = 1; }
-            else {
-                int x = ai.bestX;
-                int y = ai.bestY;
-                System.out.println(x + ", " + y);
-                if (legal(x, y, turn, true))
-                    board[y][x] = turn;
-                turn = 1;
-                ai.bestX = 10;
-                ai.bestY = 10;
-                /*white.clear();
-                black.clear();
-                for (int i = 0; i < 8; i++) {
-                    for (int j = 0; j < 8; j++) {
-                        if (board[i][j] == 1) {
-                            black.add(new Piece(i, j, 1));
-                        } else if (board[i][j] == 2) {
-                            white.add(new Piece(i, j, 2));
-                        }
-                    }
-                }*/
-                invalidate();
-            }
-        }
+//        if (turn == 2 && avp) {
+//            //Thread t = new AI(board, turn);
+//            //t.start();
+//            ai.best_move(board, turn);
+//            if (ai.num_moves[0] == 0) { turn = 1; }
+//            else {
+//                int x = ai.bestX;
+//                int y = ai.bestY;
+//                System.out.println(y + ", " + x);
+//                if (legal(x, y, turn, true))
+//                    board[y][x] = turn;
+//                turn = 1;
+//                ai.bestX = 10;
+//                ai.bestY = 10;
+//                //invalidate();
+//            }
+//        }
     }
 
     @Override
@@ -266,20 +230,21 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 //                    } else if (turn == 2) {
 //                        turn = 1;
 //                    }
-                    //switch pieces
-                    //redraw board if move is legal
-                    /*white.clear();
-                    black.clear();
-                    for (int i = 0; i < 8; i++) {
-                        for (int j = 0; j < 8; j++) {
-                            if (board[i][j] == 1) {
-                                black.add(new Piece(i, j, 1));
-                            } else if (board[i][j] == 2) {
-                                white.add(new Piece(i, j, 2));
-                            }
+                    if (turn == 2 && avp) {
+                        //Thread t = new AI(board, turn);
+                        //t.start();
+                        ai.best_move(board, turn);
+                        if (ai.num_moves[0] == 0) { turn = 1; }
+                        else {
+                            System.out.println(ai.bestY + ", " + ai.bestX);
+                            if (legal(ai.bestX, ai.bestY, turn, true))
+                                board[ai.bestY][ai.bestX] = turn;
+                            turn = 1;
+                            ai.bestX = 10;
+                            ai.bestY = 10;
+                            //invalidate();
                         }
-                    }*/
-
+                    }
                     invalidate();
                 } else {
                     System.out.println("illegal move");
@@ -342,7 +307,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                     }
                 }
             }
-            //if (move && legal) { board[y][x] = c; }
         }
         return legal;
     }

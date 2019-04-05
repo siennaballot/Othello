@@ -12,7 +12,7 @@ public class AI {
     // constructor for AI objects
     // initializes the max search depth
     public AI(){
-        maxDepth = 3;
+        maxDepth = 5;
     }
 
     /*public void run() {
@@ -25,9 +25,9 @@ public class AI {
         int x = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board[i][j] == 0 && legal(board, i, j, turn, false)) {
-                    Xmove[depth][x] = i;
-                    Ymove[depth][x] = j;
+                if (board[i][j] == 0 && legal(board, j, i, turn, false)) {
+                    Xmove[depth][x] = j;
+                    Ymove[depth][x] = i;
                     x++;
                     num_moves[depth] = x;
                 }
@@ -90,7 +90,7 @@ public class AI {
             bestVal = -9999;
             bestX = Xmove[0][0];
             bestY = Ymove[0][0];
-            for (int i = 0; i < num_moves[0]; i++) {
+            for (int i = 1; i < num_moves[0]; i++) {
                 int[][] temp = new int[8][8];       //temporary board to apply move
                 for (int x = 0; x < 8; x++) {
                     for (int y = 0; y < 8; y++) {
@@ -106,18 +106,21 @@ public class AI {
                 }
 
                 // if x and y coordinates are spaces surrounding a corner space make the move less of a priority
-                else if (board[0][0] != turn && ((Xmove[0][i] == 0 && Ymove[0][i] == 1) || (Xmove[0][i] == 1 && Ymove[0][i] == 0) || (Xmove[0][i] == 1 && Ymove[0][i] == 1))) {
+                else if (board[0][0] != turn && (Xmove[0][i] == 1 || Ymove[0][i] == 1 || Xmove[0][i] == 6 && Ymove[0][i] == 6)) {
                     val -= 100;
                 }
-                else if (board[7][7] != turn && ((Xmove[0][i] == 7 && Ymove[0][i] == 6) || (Xmove[0][i] == 6 && Ymove[0][i] == 7) || (Xmove[0][i] == 6 && Ymove[0][i] == 6))) {
-                    val -= 100;
-                }
-                else if (board[0][7] != turn && ((Xmove[0][i] == 0 && Ymove[0][i] == 6) || (Xmove[0][i] == 1 && Ymove[0][i] == 6) || (Xmove[0][i] == 1 && Ymove[0][i] == 7))) {
-                    val -= 100;
-                }
-                else if (board[7][0] != turn && ((Xmove[0][i] == 6 && Ymove[0][i] == 0) || (Xmove[0][i] == 6 && Ymove[0][i] == 1) || (Xmove[0][i] == 7 && Ymove[0][i] == 1))) {
-                    val -= 100;
-                }
+//                else if (board[0][0] != turn && ((Xmove[0][i] == 0 && Ymove[0][i] == 1) || (Xmove[0][i] == 1 && Ymove[0][i] == 0) || (Xmove[0][i] == 1 && Ymove[0][i] == 1))) {
+//                    val -= 100;
+//                }
+//                else if (board[7][7] != turn && ((Xmove[0][i] == 7 && Ymove[0][i] == 6) || (Xmove[0][i] == 6 && Ymove[0][i] == 7) || (Xmove[0][i] == 6 && Ymove[0][i] == 6))) {
+//                    val -= 100;
+//                }
+//                else if (board[0][7] != turn && ((Xmove[0][i] == 0 && Ymove[0][i] == 6) || (Xmove[0][i] == 1 && Ymove[0][i] == 6) || (Xmove[0][i] == 1 && Ymove[0][i] == 7))) {
+//                    val -= 100;
+//                }
+//                else if (board[7][0] != turn && ((Xmove[0][i] == 6 && Ymove[0][i] == 0) || (Xmove[0][i] == 6 && Ymove[0][i] == 1) || (Xmove[0][i] == 7 && Ymove[0][i] == 1))) {
+//                    val -= 100;
+//                }
 
                 // if x and y coordinates are an edge space, add 10 to prioritize
                 else if (Xmove[0][i] == 0 || Xmove[0][i] == 7 || Ymove[0][i] == 0 || Ymove[0][i] == 7) {
