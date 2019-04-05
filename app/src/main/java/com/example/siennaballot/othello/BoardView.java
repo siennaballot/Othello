@@ -62,8 +62,8 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
         black = 2;
         white = 2;
 
-        player1 = 1;  //player 1 automatically black
-        player2 = 2;  //player 2 automatically white
+        player1 = 1;  //player 1 (user) automatically black
+        player2 = 2;  //player 2 (AI) automatically white
         turn = 1;     //black gets first turn
 
         start = true;
@@ -136,21 +136,25 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
 
-            //number of white pieces
-            String whitestring = Integer.toString(white);
-            TextPaint whitepieces = new TextPaint();
-            whitepieces.setColor(Color.BLACK);
-            whitepieces.setTextSize(60);
-            whitepieces.setTextAlign(Paint.Align.LEFT);
-            c.drawText("WHITE: "+whitestring, width/10, square-20, whitepieces);
+        //if (black == 0) { turn = 2; }
+        //if (white == 0) { turn = 1; }
+        //if (black+white == 64) { turn = -1; }
 
-            //number of black pieces
-            String blackstring = Integer.toString(black);
-            TextPaint blackpieces = new TextPaint();
-            blackpieces.setColor(Color.BLACK);
-            blackpieces.setTextSize(60);
-            blackpieces.setTextAlign(Paint.Align.RIGHT);
-            c.drawText("BLACK: "+blackstring, width*8/10, square-20, blackpieces);
+        //number of white pieces
+        String whitestring = Integer.toString(white);
+        TextPaint whitepieces = new TextPaint();
+        whitepieces.setColor(Color.BLACK);
+        whitepieces.setTextSize(60);
+        whitepieces.setTextAlign(Paint.Align.LEFT);
+        c.drawText("WHITE: "+whitestring, width/10, square-20, whitepieces);
+
+        //number of black pieces
+        String blackstring = Integer.toString(black);
+        TextPaint blackpieces = new TextPaint();
+        blackpieces.setColor(Color.BLACK);
+        blackpieces.setTextSize(60);
+        blackpieces.setTextAlign(Paint.Align.RIGHT);
+        c.drawText("BLACK: "+blackstring, width*8/10, square-20, blackpieces);
 
             //display game board
             //c.drawCircle();
@@ -178,16 +182,19 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
             }*/
 
         if (turn == 2 && avp) {
+            //Thread t = new AI(board, turn);
+            //t.start();
             ai.best_move(board, turn);
-            if (ai.num_moves[0] == 0) {
-                turn = 1;
-            }
+            if (ai.num_moves[0] == 0) { turn = 1; }
             else {
                 int x = ai.bestX;
                 int y = ai.bestY;
-                legal(x, y, turn, true);
-                board[y][x] = turn;
+                System.out.println(x + ", " + y);
+                if (legal(x, y, turn, true))
+                    board[y][x] = turn;
                 turn = 1;
+                ai.bestX = 10;
+                ai.bestY = 10;
                 /*white.clear();
                 black.clear();
                 for (int i = 0; i < 8; i++) {
@@ -202,7 +209,6 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                 invalidate();
             }
         }
-        invalidate();
     }
 
     @Override
@@ -223,8 +229,12 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
         float x = e.getX();
         float y = e.getY();
 
-        //get square at upward motion event
         if (e.getAction() == MotionEvent.ACTION_DOWN) {
+            return true;
+        }
+
+        //get square at upward motion event
+        if (e.getAction() == MotionEvent.ACTION_UP) {
             /*if (start) {
                 if (x > square && x < width-square && y > square*5 && y < square*6) {
                     pvp = true;
@@ -250,11 +260,12 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                 if (legal(col1, row1, turn, move)) {
                     System.out.println("legal move");
                     board[row1][col1] = turn;
-                    if (turn == 1) {
-                        turn = 2;
-                    } else if (turn == 2) {
-                        turn = 1;
-                    }
+                    turn = 2;
+//                    if (turn == 1) {
+//                        turn = 2;
+//                    } else if (turn == 2) {
+//                        turn = 1;
+//                    }
                     //switch pieces
                     //redraw board if move is legal
                     /*white.clear();
@@ -290,6 +301,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
 
             for (int i = -1; i <= 1; i++) {
                 for (int j = -1; j <= 1; j++) {
+                    if (i==0 && j==0) { continue; }
                     posX = x + i;
                     posY = y + j;
                     if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { continue; }
@@ -302,7 +314,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                     while(!valid) {
                         posX += i;
                         posY += j;
-                        if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { continue; }
+                        if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { break; }
                         curr = board[posY][posX];
 
                         if (curr == c) {
@@ -312,18 +324,17 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                             if (move) {
                                 posX -= i;
                                 posY -= j;
-                                if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { continue; }
-                                curr = board[posY][posX];
+                                if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { break; }
 
-                                while (curr != 0) {
+                                while (!(posX == x && posY == y)) {//curr != 0) {
                                     board[posY][posX] = c;
                                     posX -= i;
                                     posY -= j;
-                                    if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { continue; }
-                                    curr = board[posY][posX];
-
+                                    if (posX < 0  || posY < 0 || posX > 7 || posY > 7) { break; }
                                 }
                             }
+                            else
+                                return true;
                         }
                         else if (curr == -1 || curr == 0) {
                             valid = true;
@@ -331,6 +342,7 @@ public class BoardView extends SurfaceView implements SurfaceHolder.Callback {
                     }
                 }
             }
+            //if (move && legal) { board[y][x] = c; }
         }
         return legal;
     }
