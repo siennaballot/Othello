@@ -1,8 +1,6 @@
 package com.example.siennaballot.othello;
 
 public class AI {
-    //int[][] board;              // board layout
-
     int[] num_moves;            // number of possible moves at each depth in search
     int[][] Xmove;              // x coordinate for each possible move at each depth in search
     int[][] Ymove;              // y coordinate for each possible move at each depth in search
