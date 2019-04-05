@@ -25,13 +25,11 @@ public class AI {
         int x = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                if (board[i][j] == 0) {
-                    if (legal(board, i, j, turn, false)) {
-                        Xmove[depth][x] = i;
-                        Ymove[depth][x] = j;
-                        x++;
-                        num_moves[depth] = x;
-                    }
+                if (board[i][j] == 0 && legal(board, i, j, turn, false)) {
+                    Xmove[depth][x] = i;
+                    Ymove[depth][x] = j;
+                    x++;
+                    num_moves[depth] = x;
                 }
             }
         }
